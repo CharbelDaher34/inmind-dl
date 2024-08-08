@@ -1,3 +1,0 @@
-# inmindAcademy
-
-s
