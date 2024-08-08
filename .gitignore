@@ -1,8 +1,7 @@
 /unet/train/*
 /unet/train_masks/*
 /yolo/data/*
-README.md
 *.jpg
 *.gif
 *.csv
-*.ipynb
+
