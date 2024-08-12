@@ -13,6 +13,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+import itertools
 
 
 ##Data loading
@@ -42,6 +43,7 @@ train_loader, val_loader = get_loaders(
     num_workers=4,
     pin_memory=True,
 )
+
 train_loader = tqdm(train_loader, desc="Training", unit="batch")
 val_loader = tqdm(val_loader, desc="Validation", unit="batch")
 
@@ -65,10 +67,14 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs, dev
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
     try:
         for epoch in range(num_epochs):
+            counter=0
             model.train()
             running_loss = 0.0
 
             for images, masks in train_loader:
+                counter=counter+1
+                if(counter==3):
+                    break
                 images, masks = images.to(device), masks.to(device)
 
                 images = images.permute(0, 3, 1, 2)
