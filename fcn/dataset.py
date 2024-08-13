@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset
 from PIL import Image
 import os
+import numpy as np
 
 
 class SegmentationDataset(Dataset):
@@ -21,10 +22,10 @@ class SegmentationDataset(Dataset):
         mask_path = os.path.join(self.data_dir, "masks", mask_name)
 
         image = Image.open(img_path).convert("RGB")
-        mask = Image.open(mask_path).convert("L")
+        mask = Image.open(mask_path)
 
         if self.transform:
             image = self.transform(image)
             mask = self.transform(mask)
 
-        return image, mask.squeeze().long()
+        return np.array(image).astype(np.float32), np.array(mask).astype(np.float32)

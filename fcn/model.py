@@ -1,17 +1,17 @@
 import torch
 import torch.nn as nn
-import torchvision.models as models
 
 
 class FCN(nn.Module):
     def __init__(self, num_classes):
         super(FCN, self).__init__()
 
-        # Load a pretrained VGG16 model
-        vgg16 = models.vgg16(pretrained=True)
-
-        # Use the features of VGG16
-        self.features = vgg16.features
+        # Define the convolutional layers
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
+        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, padding=1)
+        self.conv5 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
 
         # FCN layers
         self.fcn = nn.Sequential(
@@ -43,7 +43,16 @@ class FCN(nn.Module):
         )
 
     def forward(self, x):
-        x = self.features(x)
+        x = x.permute(0, 3, 1, 2)
+        x = self.conv1(x)
+        x = nn.ReLU()(x)
+        x = self.conv2(x)
+        x = nn.ReLU()(x)
+        x = self.conv3(x)
+        x = nn.ReLU()(x)
+        x = self.conv4(x)
+        x = nn.ReLU()(x)
+        x = self.conv5(x)
         x = self.fcn(x)
         x = self.upsample(x)
         return x
