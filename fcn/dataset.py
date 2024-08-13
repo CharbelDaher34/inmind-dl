@@ -1,0 +1,30 @@
+import torch
+from torch.utils.data import Dataset
+from PIL import Image
+import os
+
+
+class SegmentationDataset(Dataset):
+    def __init__(self, data_dir, transform=None):
+        self.data_dir = data_dir
+        self.transform = transform
+        self.images = sorted(os.listdir(os.path.join(data_dir, "images")))
+        self.masks = sorted(os.listdir(os.path.join(data_dir, "masks")))
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_name = self.images[idx]
+        img_path = os.path.join(self.data_dir, "images", img_name)
+        mask_name = self.masks[idx]
+        mask_path = os.path.join(self.data_dir, "masks", mask_name)
+
+        image = Image.open(img_path).convert("RGB")
+        mask = Image.open(mask_path).convert("L")
+
+        if self.transform:
+            image = self.transform(image)
+            mask = self.transform(mask)
+
+        return image, mask.squeeze().long()
