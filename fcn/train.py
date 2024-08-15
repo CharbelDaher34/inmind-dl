@@ -23,7 +23,11 @@ train_dataset = SegmentationDataset(data_dir="./fcn_data")
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 resize = transforms.Resize((640, 640))
 model = FCN(3, num_classes).to(device)  # Initialize the model
-model.load_state_dict(torch.load("fcn_model.pth"))
+try:
+    
+    model.load_state_dict(torch.load("fcn_model.pth"))
+except Exception as e:
+    pass
 # Initialize model, loss, and optimizer
 criterion = SegmentationLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
