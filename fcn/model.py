@@ -1,160 +1,5 @@
 import torch
 from torch import nn
-
-# from torch.nn import functional as F
-
-
-# class FCN(nn.Module):
-#     def __init__(self, in_channels, n_classes):
-#         super(FCN, self).__init__()
-#         # First convolutional block
-#         self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, padding=1)
-#         self.relu1 = nn.ReLU(inplace=True)
-#         self.pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-#         # Second convolutional block
-#         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-#         self.relu2 = nn.ReLU(inplace=True)
-#         self.pool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-#         # Third convolutional block with skip connection
-#         self.conv3 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
-#         self.relu3 = nn.ReLU(inplace=True)
-#         self.conv4 = nn.Conv2d(256, 256, kernel_size=3, padding=1)
-#         self.relu4 = nn.ReLU(inplace=True)
-#         self.pool3 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-#         # Fourth convolutional block with skip connection
-#         self.conv5 = nn.Conv2d(256, 512, kernel_size=3, padding=1)
-#         self.relu5 = nn.ReLU(inplace=True)
-#         self.conv6 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-#         self.relu6 = nn.ReLU(inplace=True)
-#         self.pool4 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-#         # Fifth convolutional block
-#         self.conv7 = nn.Conv2d(512, 4096, kernel_size=7)
-#         self.relu7 = nn.ReLU(inplace=True)
-
-#         # Classification layer
-#         self.fc = nn.Conv2d(4096, n_classes, kernel_size=1)
-
-#         # Upsampling layers
-#         self.up3 = nn.ConvTranspose2d(n_classes, 512, kernel_size=2, stride=2)
-#         self.up2 = nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2)
-#         self.up1 = nn.ConvTranspose2d(256, n_classes, kernel_size=2, stride=2)
-
-#     def forward(self, x):
-#         x = x.permute(0,3, 1,2)  # Add batch dimension
-
-#         # Pass through first convolutional block
-#         x = self.relu1(self.conv1(x))
-#         x = self.pool1(x)
-
-#         # Pass through second convolutional block
-#         x = self.relu2(self.conv2(x))
-#         x = self.pool2(x)
-
-#         # Pass through third convolutional block
-#         x = self.relu3(self.conv3(x))
-#         skip1 = x  # Store feature map for skip connection
-
-#         x = self.relu4(self.conv4(x))
-
-#         x = self.pool3(x)
-
-#         # Pass through fourth convolutional block
-#         x = self.relu5(self.conv5(x))
-#         x = self.relu6(self.conv6(x))
-#         skip2 = x  # Store feature map for skip connection
-#         x = self.pool4(x)
-
-#         # Pass through fifth convolutional block
-#         x = self.relu7(self.conv7(x))
-
-#         # Classification layer
-#         x = self.fc(x)
-
-#         # Upsample and combine with skip connections
-#         x = self.up3(x)
-
-#         x = torch.cat([x, skip2], dim=1)
-#         x = self.up2(x)
-#         x = torch.cat([x, skip1], dim=1)
-#         x = self.up1(x)
-
-#         return x
-import torch
-import torch.nn as nn
-
-
-class FCN(nn.Module):
-    def __init__(self, in_channels, n_classes):
-        super(FCN, self).__init__()
-        # First convolutional block
-        self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=3, padding=1)
-        self.relu1 = nn.ReLU(inplace=True)
-        self.conv2 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
-        self.relu2 = nn.ReLU(inplace=True)
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        # Second convolutional block
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-        self.relu3 = nn.ReLU(inplace=True)
-        self.conv4 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
-        self.relu4 = nn.ReLU(inplace=True)
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        # Third convolutional block
-        self.conv5 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
-        self.relu5 = nn.ReLU(inplace=True)
-        self.conv6 = nn.Conv2d(256, 256, kernel_size=3, padding=1)
-        self.relu6 = nn.ReLU(inplace=True)
-        self.conv7 = nn.Conv2d(256, 256, kernel_size=3, padding=1)
-        self.relu7 = nn.ReLU(inplace=True)
-        self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        # Fourth convolutional block
-        self.conv8 = nn.Conv2d(256, 512, kernel_size=3, padding=1)
-        self.relu8 = nn.ReLU(inplace=True)
-        self.conv9 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-        self.relu9 = nn.ReLU(inplace=True)
-        self.conv10 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-        self.relu10 = nn.ReLU(inplace=True)
-        self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        # Fifth convolutional block
-        self.conv11 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-        self.relu11 = nn.ReLU(inplace=True)
-        self.conv12 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-        self.relu12 = nn.ReLU(inplace=True)
-        self.conv13 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-        self.relu13 = nn.ReLU(inplace=True)
-        self.pool5 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        # Fully connected layers (implemented as convolutions)
-        self.fc6 = nn.Conv2d(512, 4096, kernel_size=7, padding=3)
-        self.relu14 = nn.ReLU(inplace=True)
-        self.fc7 = nn.Conv2d(4096, 4096, kernel_size=1)
-        self.relu15 = nn.ReLU(inplace=True)
-
-        # Final classification layer
-        self.score = nn.Conv2d(4096, n_classes, kernel_size=1)
-
-        # Upsampling layers
-        self.upscore2 = nn.ConvTranspose2d(
-            n_classes, n_classes, kernel_size=4, stride=2, padding=1
-        )
-        self.upscore4 = nn.ConvTranspose2d(
-            n_classes, n_classes, kernel_size=4, stride=2, padding=1
-        )
-        self.upscore8 = nn.ConvTranspose2d(
-            n_classes, n_classes, kernel_size=16, stride=8, padding=4
-        )
-
-import torch
-import torch.nn as nn
-
-
 class FCN(nn.Module):
     def __init__(self, in_channels, n_classes):
         super(FCN, self).__init__()
@@ -219,9 +64,12 @@ class FCN(nn.Module):
         self.up3 = nn.ConvTranspose2d(
             n_classes, n_classes, kernel_size=16, stride=8, padding=4
         )
+        self.skip_conv1 = nn.Conv2d(256, self.n_classes, kernel_size=1)
+        self.skip_conv2 = nn.Conv2d(512, self.n_classes, kernel_size=1)
+        self.softmax = nn.Softmax(dim=1)  # Add softmax layer
 
     def forward(self, x):
-        x=x.permute(0,3,1,2)
+        # x=x.permute(0,3,1,2)
         # Encoder
         x = self.relu2(self.conv2(self.relu1(self.conv1(x))))
         x = self.pool1(x)
@@ -231,14 +79,12 @@ class FCN(nn.Module):
         x = self.pool2(x)
         x = self.relu7(self.conv7(self.relu6(self.conv6(self.relu5(self.conv5(x))))))
         x = self.pool3(x)
-        skip1 = x
-        skip1=nn.Conv2d(256, self.n_classes, kernel_size=1)(skip1)  # First skip connection
+        skip1 = self.skip_conv1(x)
 
         x = self.relu10(self.conv10(self.relu9(self.conv9(self.relu8(self.conv8(x))))))
         x = self.pool4(x)
-        skip2 = x  # Second skip connection
-        skip2=nn.Conv2d(512, self.n_classes, kernel_size=1)(skip2)  # First skip connection
 
+        skip2 = self.skip_conv2(x)
 
         x = self.relu13(
             self.conv13(self.relu12(self.conv12(self.relu11(self.conv11(x)))))
@@ -253,7 +99,7 @@ class FCN(nn.Module):
 
         # Upsampling and skip connections
         x = self.up1(x)
-      
+
         # print(f"x:{x.shape}")
         # print(f"skip2:{skip2.shape}")
         # return
@@ -261,7 +107,6 @@ class FCN(nn.Module):
         x = self.up2(x)
         x = x + skip1
         x = self.up3(x)
-
         return x
 
 
@@ -294,7 +139,7 @@ class FCN(nn.Module):
 # print(f"images:{images.shape}")
 
 # output = model(images)
-# print(output.shape)
+# print(output)
 
 # # Color map: Define a color for each class (R, G, B)
 # color_map = torch.tensor(

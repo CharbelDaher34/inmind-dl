@@ -64,13 +64,33 @@ def calculate_metrics(predicted_masks, true_masks):
     )
 
 
+# def map_one_hot_to_image(one_hot, color_map):
+#     batch_size, height, width, num_colors = one_hot.shape
+
+#     # Use argmax to find the index of the 1 in each one-hot vector
+#     indices = torch.argmax(one_hot, dim=-1)
+
+#     # Use the indices to select colors from the color map
+#     output = color_map[indices]
+
+#     return output
+
+
 def map_one_hot_to_image(one_hot, color_map):
-    batch_size, height, width, num_colors = one_hot.shape
+    batch_size, height, width, num_classes = one_hot.shape
 
-    # Use argmax to find the index of the 1 in each one-hot vector
-    indices = torch.argmax(one_hot, dim=-1)
+    # Use argmax to find the index of the class with the highest score in each one-hot vector
+    indices = torch.argmax(one_hot, dim=-1)  # shape: (batch_size, height, width)
 
-    # Use the indices to select colors from the color map
-    output = color_map[indices]
+    # Expand indices to have an extra dimension to match color_map shape
+    indices = indices.unsqueeze(-1)  # shape: (batch_size, height, width, 1)
+
+    # Convert color_map to a tensor if it isn't already
+    color_map_tensor = torch.tensor(color_map, dtype=torch.uint8, device=one_hot.device)
+
+    # Use indices to select colors from the color map
+    output = color_map_tensor[
+        indices.squeeze(-1)
+    ]  # shape: (batch_size, height, width, 3)
 
     return output

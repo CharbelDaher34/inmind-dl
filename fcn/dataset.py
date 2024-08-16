@@ -22,7 +22,7 @@ class SegmentationDataset(Dataset):
         mask_path = os.path.join(self.data_dir, "masks", mask_name)
 
         image = Image.open(img_path).convert("RGB")
-        mask = Image.open(mask_path)
+        mask = Image.open(mask_path).convert("RGB")
 
         if self.transform:
             image = self.transform(image)
