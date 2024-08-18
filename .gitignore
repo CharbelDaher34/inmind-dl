@@ -7,4 +7,9 @@ lecturesWork/*
 *.pt
 *.npy
 *.tar
-
+*.pth
+*.onnx
+*./sarif
+*.cache
+*.ptl
+*.pyc
