@@ -3,7 +3,7 @@ cfg: cfg/training/yolov7.yaml
 data: ./data/data.yaml
 hyp: ./data/hyp.scratch.p5.yaml
 epochs: 2
-batch_size: 1
+batch_size: 8
 img_size:
 - 640
 - 640
@@ -39,5 +39,5 @@ freeze:
 v5_metric: false
 world_size: 1
 global_rank: -1
-save_dir: runs/train/yolov73
-total_batch_size: 1
+save_dir: runs/train/yolov74
+total_batch_size: 8

@@ -489,22 +489,25 @@ def train(hyp, opt, device, tb_writer=None):
                 wandb_logger.log({"Results": [wandb_logger.wandb.Image(str(save_dir / f), caption=f) for f in files
                                               if (save_dir / f).exists()]})
         # Test best.pt
-        logger.info('%g epochs completed in %.3f hours.\n' % (epoch - start_epoch + 1, (time.time() - t0) / 3600))
-        if opt.data.endswith('coco.yaml') and nc == 80:  # if COCO
-            for m in (last, best) if best.exists() else (last):  # speed, mAP tests
-                results, _, _ = test.test(opt.data,
-                                          batch_size=batch_size * 2,
-                                          imgsz=imgsz_test,
-                                          conf_thres=0.001,
-                                          iou_thres=0.7,
-                                          model=attempt_load(m, device).half(),
-                                          single_cls=opt.single_cls,
-                                          dataloader=testloader,
-                                          save_dir=save_dir,
-                                          save_json=True,
-                                          plots=False,
-                                          is_coco=is_coco,
-                                          v5_metric=opt.v5_metric)
+        try:
+            logger.info('%g epochs completed in %.3f hours.\n' % (epoch - start_epoch + 1, (time.time() - t0) / 3600))
+            if opt.data.endswith('coco.yaml') and nc == 80:  # if COCO
+                for m in (last, best) if best.exists() else (last):  # speed, mAP tests
+                    results, _, _ = test.test(opt.data,
+                                              batch_size=batch_size * 2,
+                                              imgsz=imgsz_test,
+                                              conf_thres=0.001,
+                                              iou_thres=0.7,
+                                              model=attempt_load(m, device).half(),
+                                              single_cls=opt.single_cls,
+                                              dataloader=testloader,
+                                              save_dir=save_dir,
+                                              save_json=True,
+                                              plots=False,
+                                              is_coco=is_coco,
+                                              v5_metric=opt.v5_metric)
+        except:
+            pass
 
         # Strip optimizers
         final = best if best.exists() else last  # final model
