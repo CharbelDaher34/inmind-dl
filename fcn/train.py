@@ -3,20 +3,19 @@ import warnings
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from torchvision import transforms
 import torch.nn.functional as F
 from fcn import FCN
 from loss import SegmentationLoss
 from dataset import SegmentationDataset
 import numpy as np
 import matplotlib.pyplot as plt
-from torch.optim.lr_scheduler import StepLR
 from torch.utils.tensorboard import SummaryWriter
-from utils import calculate_metrics, map_one_hot_to_image
-from PIL import Image
+from utils import calculate_metrics
 import tqdm
 import traceback
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+import albumentations as A
+import cv2
 
 warnings.filterwarnings("ignore")
 
@@ -28,13 +27,22 @@ num_epochs = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the dataset
-train_dataset = SegmentationDataset(data_dir="./fcn_data")
+train_dataset = SegmentationDataset(
+    data_dir="./fcn_data",
+    transform=A.Compose(
+        [
+            A.Rotate(limit=45, interpolation=cv2.INTER_AREA),
+            A.HorizontalFlip(),
+            A.VerticalFlip(),
+        ]
+    ),
+)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 # Initialize model
 model = FCN(3, num_classes).to(device)  # FCN expects 3-channel input images
 try:
-    model = torch.load("./bestModel1.pt").to(device)
+    model = torch.load("./bestModelFinal.pt").to(device)
     print("Loaded model")
 except Exception as e:
     pass
@@ -61,31 +69,6 @@ color_map = {
     8: [25, 255, 82],
     9: [255, 111, 25],
 }
-# color_map = {
-#     0: [0, 0, 0],  # Black
-#     1: [255, 0, 0],  # Red
-#     2: [0, 255, 0],  # Green
-#     3: [0, 0, 255],  # Blue
-#     4: [255, 255, 0],  # Yellow
-#     5: [255, 0, 255],  # Magenta
-#     6: [0, 255, 255],  # Cyan
-#     7: [128, 0, 128],  # Purple
-#     8: [255, 165, 0],  # Orange
-#     9: [0, 128, 128],  # Teal
-# }
-
-color_map_list = [
-    [0, 0, 0],
-    [25, 82, 255],
-    [255, 25, 197],
-    [140, 255, 25],
-    [226, 255, 25],
-    [255, 197, 25],
-    [140, 25, 255],
-    [54, 255, 25],
-    [25, 255, 82],
-    [255, 111, 25],
-]
 
 
 def convert_rgb_to_class_index(mask, color_map=color_map):
@@ -183,7 +166,9 @@ for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
 
-        for i, (images, masks) in tqdm.tqdm(enumerate(train_loader), total=len(train_loader)):
+        for i, (images, masks) in tqdm.tqdm(
+            enumerate(train_loader), total=len(train_loader)
+        ):
 
             images = preprocess_batch_images(images)
             index, masks = preprocess_batch_masks(masks)
@@ -204,7 +189,7 @@ for epoch in range(num_epochs):
             precision_total += precision
             recall_total += recall
             # print(f"{i+1}/{len(train_loader)}")
-            if(i%100==0):
+            if i % 100 == 0:
                 torch.save(model, "bestModel.pt")
 
         # Log metrics to TensorBoard after each epoch

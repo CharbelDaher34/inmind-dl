@@ -3,8 +3,8 @@ from torch.utils.data import Dataset
 from PIL import Image
 import os
 import numpy as np
-
-
+import albumentations as A
+import cv2
 class SegmentationDataset(Dataset):
     def __init__(self, data_dir, transform=None):
         self.data_dir = data_dir
@@ -24,8 +24,10 @@ class SegmentationDataset(Dataset):
         image = Image.open(img_path).convert("RGB")
         mask = Image.open(mask_path).convert("RGB")
 
+        
         if self.transform:
-            image = self.transform(image)
-            mask = self.transform(mask)
+            transformed_data = self.transform(image=np.array(image), mask=np.array(mask))
+            image = transformed_data['image']
+            mask = transformed_data['mask']
 
         return np.array(image).astype(np.float32), np.array(mask).astype(np.float32)
