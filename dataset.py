@@ -64,4 +64,8 @@ class Dataset(torch.utils.data.Dataset):
         # if self.transform:
         #     image = self.transform(image)
 
-        return (os.path.abspath(image_path), yoloBoxes, os.path.abspath(image_path))
+        return (
+            os.path.abspath(image_path),
+            yoloBoxes,
+            os.path.abspath(segmentation_image_path),
+        )

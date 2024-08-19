@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 def displayImagesWithBoxesXminXmaxYminYmax(image_path, bounding_boxes):
@@ -43,44 +43,70 @@ def displayImagesWithBoxesXminXmaxYminYmax(image_path, bounding_boxes):
     plt.show()
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
+# def displayImagesWithBoxesYolo(image_path, bounding_boxes,outputPath=None):
+#     """
+#     Plots bounding boxes on an image.
+
+#     Args:
+#       image_path: Path to the image file.
+#       bounding_boxes: List of bounding boxes in the format (x_center, y_center, width, height).
+#     """
+
+#     # Load the image
+#     image = np.array(Image.open(image_path))[:, :, :3]
+#     image = np.array(torch.tensor(image).permute(0, 1, 2))
+#     plt.imshow(image)
+
+#     # Convert bounding boxes to xmin, ymin, xmax, ymax
+#     for x_center, y_center, width, height in bounding_boxes:
+
+#         xmin = float(x_center - width / 2) * image.shape[0]
+#         ymin = float(y_center - height / 2) * image.shape[1]
+#         xmax = float(x_center + width / 2) * image.shape[0]
+#         ymax = float(y_center + height / 2) * image.shape[1]
+
+#         # Plot the bounding box
+#         rect = plt.Rectangle(
+#             (xmin, ymin),
+#             xmax - xmin,
+#             ymax - ymin,
+#             fill=False,
+#             edgecolor="red",
+#             linewidth=2,
+#         )
+#         plt.gca().add_patch(rect)
+
+#     plt.axis("off")
+#     plt.show()
+#     if outputPath:
+#         plt.savefig(
+#             outputPath
+#         )  # Replace with your desired filename and format  # Replace with your desired filename and format
 
 
-def displayImagesWithBoxesYolo(image_path, bounding_boxes):
+def displayImagesWithBoxesYolo(image_path, bounding_boxes, outputPath=None, show=False):
     """
-    Plots bounding boxes on an image.
+    Plots bounding boxes on an image using Pillow.
 
     Args:
       image_path: Path to the image file.
       bounding_boxes: List of bounding boxes in the format (x_center, y_center, width, height).
     """
-    print("ete")
-
     # Load the image
-    image = np.array(Image.open(image_path))
-    image=image[:,:,:,3]
-    plt.imshow(image)
-    print(image.shape)
+    image = Image.open(image_path)
+    draw = ImageDraw.Draw(image)
 
-    # Convert bounding boxes to xmin, ymin, xmax, ymax
+    # Convert bounding boxes to xmin, ymin, xmax, ymax and draw rectangles
     for x_center, y_center, width, height in bounding_boxes:
-        xmin = int(x_center - width / 2)
-        ymin = int(y_center - height / 2)
-        xmax = int(x_center + width / 2)
-        ymax = int(y_center + height / 2)
+        xmin = int((x_center - width / 2) * image.width)
+        ymin = int((y_center - height / 2) * image.height)
+        xmax = int((x_center + width / 2) * image.width)
+        ymax = int((y_center + height / 2) * image.height)
 
-        # Plot the bounding box
-        rect = plt.Rectangle(
-            (xmin, ymin),
-            width,
-            height,
-            fill=False,
-            edgecolor="red",
-            linewidth=2,
-        )
-        plt.gca().add_patch(rect)
+        draw.rectangle([xmin, ymin, xmax, ymax], outline="red", width=2)
+    if show:
+        image.show()
+    if outputPath:
+        image.save(outputPath)  # Replace with your desired filename and format
 
-    plt.axis("off")
-    plt.show()
+    return image
