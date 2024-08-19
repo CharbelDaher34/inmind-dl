@@ -5,6 +5,11 @@ from utils.datasets import LoadImages
 from utils.general import check_img_size, non_max_suppression, scale_coords, xyxy2xywh
 from utils.torch_utils import select_device
 
+try:
+    model = attempt_load("./bestModels/yolo.pt", map_location="cpu")
+except Exception as e:
+    model = attempt_load("../bestModels/yolo.pt")
+
 
 def detect_objects(
     weights_path, image_path, conf_thres=0.25, iou_thres=0.45, img_size=640
@@ -15,7 +20,7 @@ def detect_objects(
     output = []
 
     # Load model
-    model = attempt_load(weights_path, map_location=device)
+    # model = attempt_load(weights_path, map_location=device)
     stride = int(model.stride.max())
     imgsz = check_img_size(img_size, s=stride)
 
