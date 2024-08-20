@@ -50,8 +50,7 @@ def map_one_hot_to_image(one_hot, color_map=color_map_list):
     return output
 
 
-def perform_inference(image, model_path, color_map=color_map_list):
-    session = ort.InferenceSession(model_path)
+def perform_inference(image, color_map=color_map_list):
     image = torch.tensor(np.expand_dims(np.array(image), axis=0), dtype=torch.float32)[
         :, :, :, :3
     ]
@@ -60,8 +59,8 @@ def perform_inference(image, model_path, color_map=color_map_list):
     image = resize(image)
     image = image.permute(0, 3, 2, 1) / 255
 
-    input_name = session.get_inputs()[0].name
-    outputs = session.run(None, {input_name: np.array(image)})
+    input_name = seg_session.get_inputs()[0].name
+    outputs = seg_session.run(None, {input_name: np.array(image)})
     outputs = torch.tensor(outputs[0][0]).permute(1, 2, 0)
     outputs = torch.tensor(np.expand_dims(np.array(outputs), axis=0))
     outputs = map_one_hot_to_image(outputs, color_map)
@@ -124,7 +123,7 @@ async def list_models():
 @app.post("/segment")
 async def segment_image(file: UploadFile = File(...)):
     image = Image.open(BytesIO(await file.read())).convert("RGB")
-    segmented, _ = perform_inference(image, fcn_model_path)
+    segmented, _ = perform_inference(image)
 
     segmented_image = Image.fromarray(segmented[0].numpy().astype("uint8"))
 

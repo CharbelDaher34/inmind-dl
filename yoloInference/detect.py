@@ -11,9 +11,7 @@ except Exception as e:
     model = attempt_load("../bestModels/yolo.pt")
 
 
-def detect_objects(
-    weights_path, image_path, conf_thres=0.25, iou_thres=0.45, img_size=640
-):
+def detect_objects(image_path, conf_thres=0.25, iou_thres=0.45, img_size=640):
     # Initialize
     device = select_device("")
     half = device.type != "cpu"
