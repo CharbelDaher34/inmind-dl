@@ -13,3 +13,5 @@ lecturesWork/*
 *.cache
 *.ptl
 *.pyc
+!/yolo/yolov7_data/**
+!/fcn/fcn_data/**
