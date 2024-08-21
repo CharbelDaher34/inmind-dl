@@ -13,5 +13,9 @@ lecturesWork/*
 *.cache
 *.ptl
 *.pyc
-!/yolov7/yolov7_data/**
+# !/yolov7/yolov7_data/**
 !/fcn/fcn_data/**
+!*yolo.pt
+!*fcn.onnx
+fcn/fcn.onnx
+api/bestModels/**
