@@ -32,7 +32,6 @@ color_map_list = torch.tensor(
         [25, 82, 255],
         [255, 25, 197],
         [140, 255, 25],
-        [0, 0, 0],
         [226, 255, 25],
         [255, 197, 25],
         [140, 25, 255],
@@ -104,17 +103,26 @@ def displayImagesWithBoxesYolo(image_path, bounding_boxes, outputPath=None, show
     return image
 
 
-@app.get("/models")
+@app.get("/apis")
 async def list_models():
     return JSONResponse(
         content={
-            "models": [
-                {"name": "Segmentation Model", "type": "ONNX", "path": fcn_model_path},
+            "endpoints": [
                 {
-                    "name": "Bounding Box Model",
-                    "type": "Pytorch",
-                    "path": "./bestModels/yolo.pt",
+                    "path": "/segment",
+                    "method": "POST",
+                    "description": "Performs image segmentation on the uploaded image."
                 },
+                {
+                    "path": "/detect",
+                    "method": "POST",
+                    "description": "Detects objects in the uploaded image and returns bounding boxes, classes, and confidences."
+                },
+                {
+                    "path": "/detect_image",
+                    "method": "POST",
+                    "description": "Detects objects in the uploaded image and returns the image with bounding boxes drawn."
+                }
             ]
         }
     )
