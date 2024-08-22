@@ -148,6 +148,7 @@ async def detect_bbox(file: UploadFile = File(...)):
     image_path = os.path.abspath("./image.png")
     image.save(image_path)
     output = detect_objects(image_path)
+    os.remove(image_path)
     if output == []:
         return JSONResponse(content={"boxes": [], "classes": [], "confidences": []})
     ### Extract and convert the data to JSON serializable types
@@ -172,6 +173,7 @@ async def detect_bbox_image(file: UploadFile = File(...)):
     image_path = os.path.abspath("./image.png")
     image.save(image_path)
     output = detect_objects(image_path)
+    os.remove(image_path)
     if output == []:
         return JSONResponse(content={})
     ### Extract and convert the data to JSON serializable types
@@ -183,7 +185,7 @@ async def detect_bbox_image(file: UploadFile = File(...)):
     image = Image.fromarray(np.array(image).astype("uint8"))
 
     buffered = BytesIO()
-    image.save(buffered, format="PNG")
+    # image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return JSONResponse(content={"image": img_str})
 
